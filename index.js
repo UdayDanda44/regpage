@@ -1,85 +1,94 @@
-document.addEventListener('DOMContentLoaded', function () {
-  const form = document.getElementById('registrationForm');
-  const entriesBody = document.getElementById('entriesBody');
-  let entries = [];
+const dobInput = document.getElementById("dob"); // Updated ID to match HTML
+dobInput.addEventListener("input", () => validate(dobInput.value));
 
-  // Load entries from localStorage if available
-  if (localStorage.getItem('entries')) {
-    entries = JSON.parse(localStorage.getItem('entries'));
-    renderEntries();
-  }
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const dob = document.getElementById('dob').value;
-    const acceptTerms = document.getElementById('acceptTerms').checked;
-
-    // Validate email
-    const validEmail = validateEmail(email);
-
-    // Calculate age from date of birth
-    const age = calculateAge(dob);
-
-    if (validEmail && age >= 18 && age <= 55) {
-      // Add entry to local entries array
-      entries.push({
-        name,
-        email,
-        password,
-        dob,
-        acceptTerms
-      });
-
-      // Save entries to localStorage
-      localStorage.setItem('entries', JSON.stringify(entries));
-
-      // Render entries
-      renderEntries();
-
-      // Clear form fields after submission
-      form.reset();
-    } else {
-      alert('Enter a valid email address and Ensure age is between 18 and 55.');
-    }
-  });
-
-  function validateEmail(email) {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  }
-
-  function calculateAge(dob) {
-    const dobDate = new Date(dob);
+function validate(dobValue) {
     const today = new Date();
-    let age = today.getFullYear() - dobDate.getFullYear();
-    const monthDiff = today.getMonth() - dobDate.getMonth();
+    const dobDate = new Date(dobValue);
 
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
-      age--;
+    const age = today.getFullYear() - dobDate.getFullYear();
+
+    if (age < 18 || age > 55) {
+        dobInput.setCustomValidity("You must be between 18 and 55 years old to register.");
+        dobInput.reportValidity();
+    } else {
+        dobInput.setCustomValidity('');
     }
+}
 
-    return age;
-  }
+const userForm = document.getElementById('my-form');
 
-  function renderEntries() {
-    // To Clear previous entries from table
-    entriesBody.innerHTML = '';
+const retrieveEntries = () => {
+    let entries = localStorage.getItem('userEntries');
+    if (entries) {
+        entries = JSON.parse(entries);
+    } else {
+        entries = [];
+    }
+    return entries;
+};
 
-    // To Render all entries
-    entries.forEach(entry => {
-      const newRow = document.createElement('tr');
-      newRow.innerHTML = `
-        <td>${entry.name}</td>
-        <td>${entry.email}</td>
-        <td>${entry.password}</td>
-        <td>${entry.dob}</td>
-        <td>${entry.acceptTerms ? 'Yes' : 'No'}</td>
-      `;
-      entriesBody.appendChild(newRow);
-    });
-  }
-});
+const saveEntry = (entry) => {
+    let entries = retrieveEntries();
+    entries.push(entry);
+    localStorage.setItem('userEntries', JSON.stringify(entries));
+};
+
+const displayEntries = () => {
+    const entries = retrieveEntries();
+
+    const tableEntries = entries.map((entry) => {
+        const nameCell = `<td>${entry.fullName || ''}</td>`;
+        const emailCell = `<td>${entry.Email || ''}</td>`;
+        const passwordCell = `<td>${entry.Password || ''}</td>`;
+        const dobCell = `<td>${entry.Dob || ''}</td>`;
+        const t_cCell = `<td>${entry.acceptTerms || ''}</td>`;
+        const row = `<tr>${nameCell} ${emailCell} ${passwordCell} ${dobCell} ${t_cCell}</tr>`;
+        return row;
+    }).join("\n");
+
+    const details = document.getElementById('user-entries');
+    details.innerHTML = tableEntries;
+};
+
+const saveUserForm = (event) => {
+    event.preventDefault();
+    const entry = {
+        fullName: document.querySelector('#name').value, // Updated ID to match HTML
+        Email: document.querySelector('#email').value, // Updated ID to match HTML
+        Password: document.querySelector('#password').value, // Updated ID to match HTML
+        Dob: document.querySelector('#dob').value,
+        acceptTerms: document.querySelector('#termsConditions').checked ? 'true' : 'false'
+    };
+
+    if (!validateInput(entry)) {
+        alert("Please fill all fields with valid data!");
+        return false;
+    } else {
+        saveEntry(entry);
+        clearFields();
+        displayEntries();
+    }
+};
+
+const validateInput = (entry) => {
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return entry.fullName && emailRegex.test(entry.Email) && entry.Password && entry.Dob;
+};
+
+const clearFields = () => {
+    document.querySelector('#name').value = ''; // Updated ID to match HTML
+    document.querySelector('#email').value = ''; // Updated ID to match HTML
+    document.querySelector('#password').value = ''; // Updated ID to match HTML
+    document.querySelector('#dob').value = '';
+    document.querySelector('#termsConditions').checked = false;
+};
+
+userForm.addEventListener('submit', saveUserForm);
+
+function updateEntries() {
+    displayEntries();
+}
+
+// Display entries on page load
+displayEntries();
