@@ -1,57 +1,33 @@
-body {
-  font-family:'Times New Roman', Times, serif;
-  margin: 20px;
-  background-color: aliceblue;
-}
 
-h1 {
-  text-align: center;
-}
+        .container2 {
+            background-color: #d8e0db;
+            border: 1px solid #1a1818;
+            width: 50vh;
+            margin: 0 auto;
+            padding: 30px;
+            line-height: 1.5;
+        }
 
-form {
-  width: 300px;
-  margin: 0 auto;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+        }
+        th, td {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.897);
+        }
+        button {
+            background-color: rgb(229, 69, 20);
+            padding-top: 7px;
+        }
 
-label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="date"],
-input[type="checkbox"],
-input[type="submit"] {
-  width: calc(100% - 10px);
-  padding: 5px;
-  margin-bottom: 10px;
-}
-
-input[type="submit"] {
-  background-color: #f22338;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-input[type="submit"]:hover {
-  background-color: #f22338;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-th {
-  background-color: #f2f2f2;
-}
+        /* Added the following style definition */
+        .container1 {
+            background-color: #e8ebe9;
+            border: 1px solid #1a1818;
+            width: 70vh;
+            margin: 20px auto;
+            padding: 30px;
+            line-height: 1.5;
+        }
